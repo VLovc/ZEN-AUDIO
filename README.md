@@ -1,4 +1,4 @@
-# 🎵 Kaketsu Music
+# 🎵 ZEN AUDIO
 
 A modern full-stack music streaming web application built with React, Tailwind CSS v4, Node.js (Express), and MongoDB Atlas.
 
