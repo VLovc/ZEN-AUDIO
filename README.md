@@ -1,106 +1,98 @@
 # 🎵 ZEN AUDIO
 
-A modern full-stack music streaming web application built with React, Tailwind CSS v4, Node.js (Express), and MongoDB Atlas.
+Một ứng dụng web nghe nhạc trực tuyến hiện đại và trực quan hóa âm thanh chuyên nghiệp (Music Streaming & Audio Visualizer Platform), được xây dựng trên nền tảng **React (Vite)**, **Tailwind CSS v4** và hệ thống quản lý âm thanh nâng cao.
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Công Nghệ Sử Dụng (Tech Stack)
 
-### Frontend
-- **Framework:** React (Vite template)
-- **Styling:** Tailwind CSS v4 (using `@theme` directives)
-- **State Management & Icons:** Lucide React, CSS Transitions & Animations
+### Frontend (`/ZENAUDIO`)
+- **Framework:** React 19 (Vite)
+- **Styling:** Tailwind CSS v4 (sử dụng `@tailwindcss/vite` & `@tailwindcss/postcss`)
+- **Routing:** React Router DOM v7
+- **HTTP Client:** Axios
+- **State Management:** React Context API (quản lý trạng thái trình phát nhạc và trực quan sóng âm)
 
-### Backend
+### Backend (Dự kiến tại gốc hoặc máy chủ liên kết)
 - **Runtime:** Node.js
 - **Framework:** Express.js
-- **Database ORM:** Mongoose
-- **Tooling:** Nodemon (for development hot reload), Cors, Dotenv
-
-### Database
-- **Database:** MongoDB Atlas (Cloud)
+- **Database:** MongoDB Atlas
+- **Security:** JSON Web Token (JWT) cho Authentication & BcryptJS để mã hóa mật khẩu.
 
 ---
 
-## 📂 Project Structure
+## 📂 Cấu Trúc Dự Án (Project Structure)
+
+Dự án hiện tại được chia thành cấu trúc như sau:
 
 ```text
-Kaketsu Music/
-├── frontend/             # React Frontend (Vite)
+ZEN AUDIO/ (Thư mục gốc)
+├── ZENAUDIO/                     # Source Code Frontend (React + Vite)
 │   ├── src/
-│   │   ├── components/   # UI & Layout components (Auth, PlayerBar, etc.)
-│   │   ├── App.jsx
-│   │   ├── index.css     # Global CSS with Tailwind CSS v4 theme config
+│   │   ├── api/                  # Cấu hình gọi API (axiosInstance.js)
+│   │   ├── components/           # Các component giao diện chính
+│   │   │   ├── Artist/           # Trang nghệ sĩ, danh sách bài hát nổi bật, AlbumGrid
+│   │   │   ├── Auth/             # Form Đăng nhập & Đăng ký người dùng
+│   │   │   ├── Layout/           # Sidebar, PlayerBar, PlayerBarStudio, RightPanel
+│   │   │   ├── Library/          # Quản lý thư viện nhạc cá nhân, CollectionCard
+│   │   │   ├── Search/           # Tìm kiếm thông minh với Bento Grid thiết kế đẹp mắt
+│   │   │   └── Studio/           # Dashboard phòng thu chuyên nghiệp (Equalizer, Visualizer, Analytics)
+│   │   ├── context/              # Quản lý AudioContext và PlayerContext toàn cục
+│   │   ├── hooks/                # Custom hooks xử lý sóng âm (useAudioVisualizer.js)
+│   │   ├── App.jsx               # Component gốc quản lý Route chính
 │   │   └── main.jsx
 │   ├── tailwind.config.js
-│   ├── postcss.config.js
+│   ├── vite.config.js
 │   └── package.json
 │
-└── backend/              # Node.js Backend
-    ├── src/
-    │   ├── models/       # Mongoose Schemas (Playlist, Track, User)
-    │   └── middlewares/  # Express Middlewares (authMiddleware)
-    ├── .env              # Environment variables configuration
-    ├── server.js         # Entry point for backend Express app
-    └── package.json
+├── .gitignore                    # Cấu hình bỏ qua các file rác/thư mục nặng khi đẩy lên Git
+├── package.json                  # Cấu hình phụ thuộc ở thư mục gốc (BcryptJS, JWT, v.v.)
+└── README.md                     # File hướng dẫn này
 ```
 
 ---
 
-## 🛠️ Getting Started
+## 🌟 Tính Năng Nổi Bật (Key Features)
 
-### Prerequisites
-- Node.js (v16.x or higher)
-- npm or yarn
-- A MongoDB Atlas Account
-
-### Backend Installation & Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
-3. Configure the environment variables. Rename/create `.env` and fill in your MongoDB connection string and server port:
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/kaketsu_music?retryWrites=true&w=majority
-   ```
-4. Start the backend server in development mode:
-   ```bash
-   npm run dev
-   ```
-   *The server should run on `http://localhost:5000` and display "Connected to MongoDB".*
-
-### Frontend Installation & Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the Vite React development server:
-   ```bash
-   npm run dev
-   ```
-   *The client will be running on `http://localhost:5173`.*
+1. **Dashboard Phòng Thu Âm Thanh (Studio Dashboard):**
+   - Bộ trực quan hóa tần số âm thanh chuyên nghiệp (Phase Correlation, Bit Depth Analytics).
+   - Bộ chỉnh âm tần số (Equalizer Card) thời gian thực.
+   - Các hiệu ứng nhấp nháy công nghệ cao (Tech Flicker Card) tạo cảm giác cực kỳ Premium và Tech-centric.
+2. **Hệ Thống Player Context Toàn Cục:**
+   - Điều khiển bài nhạc (Play, Pause, Skip, Volume, Seek) liền mạch xuyên suốt toàn ứng dụng qua React Context.
+   - Sử dụng Web Audio API để đồng bộ trực quan sóng âm (Visualizer) từ nhạc đang phát.
+3. **Tìm Kiếm Đa Dạng (Bento Grid Search):**
+   - Thiết kế giao diện tìm kiếm dạng lưới Bento phong cách Apple/Modern UI.
+   - Phân loại danh mục nhạc trực quan.
+4. **Trang Nghệ Sĩ Chuyên Nghiệp (Artist Page):**
+   - Hiển thị bài hát phổ biến, danh sách Album dạng lưới, thông tin bên lề (sidebar) và ảnh bìa nghệ sĩ sống động.
+5. **Đăng Ký & Đăng Nhập:**
+   - Quản lý phiên đăng nhập và lưu trữ mã bảo mật Token JWT tự động chèn vào header trong mọi yêu cầu API.
 
 ---
 
-## 🌟 Key Features
-- **Modern User Interface:** Highly custom design system with custom colors and glassmorphism panel design.
-- **Music Playback Control:** Dynamic player bar with state management.
-- **Authentication:** Register and login features for users.
-- **Playlists & Library:** Manage custom playlists and tracks using MongoDB.
+## 🛠️ Hướng Dẫn Cài Đặt & Chạy Dự Án
+
+### Yêu Cầu Hệ Thống
+- Đã cài đặt **Node.js** (v18.x trở lên được khuyến nghị)
+- Đã cài đặt **npm** hoặc **yarn**
+
+### Các Bước Chạy Frontend
+1. Mở terminal và di chuyển vào thư mục frontend:
+   ```bash
+   cd ZENAUDIO
+   ```
+2. Cài đặt các gói thư viện phụ thuộc:
+   ```bash
+   npm install
+   ```
+3. Khởi động môi trường phát triển (Local Server):
+   ```bash
+   npm run dev
+   ```
+   *Giao diện của bạn sẽ chạy tại địa chỉ mặc định:* `http://localhost:5173`
 
 ---
 
-## 📝 License
-This project is licensed under the ISC License.
-
-
-# App-music 
+## 📝 Bản Quyền (License)
+Dự án được phân phối dưới giấy phép **ISC License**.
