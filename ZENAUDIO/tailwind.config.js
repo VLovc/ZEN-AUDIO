@@ -3,53 +3,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "on-secondary-fixed-variant": "#474746",
-        "on-primary-container": "#5b7300",
-        "on-primary-fixed-variant": "#3c4d00",
-        "on-error": "#ffffff",
-        "tertiary-container": "#ededed",
-        "surface-container": "#efeded",
-        "primary-fixed-dim": "#abd600",
-        "on-secondary-container": "#636262",
-        "on-primary": "#ffffff",
-        "surface-variant": "#e3e2e2",
-        "inverse-on-surface": "#f2f0f0",
-        "outline": "#747a60",
-        "on-tertiary-container": "#6a6b6b",
-        "surface-container-highest": "#e3e2e2",
-        "on-tertiary-fixed-variant": "#454747",
-        "inverse-surface": "#303031",
-        "on-tertiary": "#ffffff",
-        "error-container": "#ffdad6",
-        "surface-bright": "#faf9f9",
-        "tertiary": "#5d5f5f",
-        "surface-dim": "#dbdad9",
-        "secondary-container": "#e2dfde",
-        "on-primary-fixed": "#161e00",
-        "background": "#faf9f9",
-        "secondary": "#5f5e5e",
-        "primary": "#506600",
-        "inverse-primary": "#abd600",
-        "on-surface": "#1b1c1c",
-        "tertiary-fixed": "#e2e2e2",
+        "background": "#09090b", // zinc-950
+        "on-background": "#ffffff",
+        "surface": "#18181b", // zinc-900
+        "on-surface": "#ffffff",
+        "surface-variant": "#27272a", // zinc-800
+        "on-surface-variant": "#a1a1aa", // zinc-400
+        "surface-container-lowest": "rgba(0,0,0,1)",
+        "surface-container-low": "rgba(255,255,255,0.02)",
+        "surface-container": "rgba(255,255,255,0.05)",
+        "surface-container-high": "rgba(255,255,255,0.1)",
+        "surface-container-highest": "rgba(255,255,255,0.15)",
+        "primary": "#ccff00", // neon green accent
+        "on-primary": "#000000",
         "primary-container": "#ccff00",
-        "error": "#ba1a1a",
-        "on-background": "#1b1c1c",
-        "surface-container-high": "#e9e8e8",
-        "surface": "#faf9f9",
+        "on-primary-container": "#000000",
+        "secondary": "#a1a1aa", // zinc-400
         "on-secondary": "#ffffff",
-        "surface-tint": "#506600",
-        "secondary-fixed-dim": "#c8c6c5",
-        "on-tertiary-fixed": "#1a1c1c",
-        "surface-container-low": "#f5f3f3",
-        "surface-container-lowest": "#ffffff",
-        "on-error-container": "#93000a",
-        "on-secondary-fixed": "#1c1b1b",
-        "on-surface-variant": "#444933",
-        "tertiary-fixed-dim": "#c6c6c7",
-        "outline-variant": "#c4c9ac",
-        "secondary-fixed": "#e5e2e1",
-        "primary-fixed": "#c3f400"
+        "error": "#ef4444", // red-500
+        "on-error": "#ffffff",
+        "error-container": "#7f1d1d", // red-900
+        "on-error-container": "#fca5a5", // red-300
+        "outline": "#3f3f46", // zinc-700
+        "outline-variant": "#27272a",
+        "inverse-surface": "#ffffff",
+        "inverse-on-surface": "#000000",
+        "inverse-primary": "#506600",
       },
       fontFamily: {
         "label-pixel": ["Space Mono"],

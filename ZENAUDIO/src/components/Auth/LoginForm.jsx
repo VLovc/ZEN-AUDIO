@@ -46,10 +46,10 @@ const LoginForm = () => {
                         }}
                     ></div>
 
-                    <div className="relative z-10 w-4/5 aspect-square max-w-2xl flex items-center justify-center">
-                        <div className="absolute inset-0 rounded-full border border-primary/20 animate-[pulse_8s_infinite]"></div>
-                        <div className="absolute inset-8 rounded-full border border-primary/40 animate-[pulse_6s_infinite]"></div>
-                        <div className="absolute inset-16 rounded-full border border-primary/60 animate-[pulse_4s_infinite]"></div>
+                    <div className="relative z-20 w-[72%] aspect-square max-w-lg flex items-center justify-center">
+                        <div className="absolute -inset-4 rounded-full border border-primary/20 animate-[pulse_8s_infinite] pointer-events-none"></div>
+                        <div className="absolute -inset-8 rounded-full border border-primary/40 animate-[pulse_6s_infinite] pointer-events-none"></div>
+                        <div className="absolute -inset-12 rounded-full border border-primary/60 animate-[pulse_4s_infinite] pointer-events-none"></div>
                         <img
                             className="w-full h-full object-cover rounded-xl pixel-border z-20 grayscale hover:grayscale-0 transition-all duration-700"
                             src="https://i.pinimg.com/736x/7f/e9/3c/7fe93cfbf9519f9850034918d3a1d5d8.jpg"
@@ -146,7 +146,7 @@ const LoginForm = () => {
                                 className="w-full h-14 bg-[#1DB954] hover:bg-[#1ed760] text-black font-headline font-bold text-base rounded-full shadow-[0_0_30px_rgba(29,185,84,0.3)] hover:shadow-[0_0_40px_rgba(29,185,84,0.5)] transition-all flex items-center justify-center gap-3 active:scale-[0.98] cursor-pointer group"
                             >
                                 <svg className="w-6 h-6 text-black group-hover:scale-105 transition-transform" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.894-.982-.336.075-.668-.135-.744-.47-.076-.336.135-.668.47-.744 3.856-.88 7.15-.5 9.822 1.137.295.18.387.563.206.852zm1.225-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.85-.107-.975-.52-.125-.413.107-.85.52-.975 3.66-1.11 8.225-.573 11.35 1.348.367.227.487.707.26 1.074zm.107-2.846C14.238 8.613 8.163 8.413 4.636 9.484c-.54.163-1.112-.147-1.275-.687-.163-.54.147-1.112.687-1.275 4.056-1.23 10.77-1.004 14.996 1.503.486.289.645.912.356 1.398-.29.487-.913.646-1.4.357z"/>
+                                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.894-.982-.336.075-.668-.135-.744-.47-.076-.336.135-.668.47-.744 3.856-.88 7.15-.5 9.822 1.137.295.18.387.563.206.852zm1.225-2.72c-.227.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.08-1.182-.413.125-.85-.107-.975-.52-.125-.413.107-.85.52-.975 3.66-1.11 8.225-.573 11.35 1.348.367.227.487.707.26 1.074zm.107-2.846C14.238 8.613 8.163 8.413 4.636 9.484c-.54.163-1.112-.147-1.275-.687-.163-.54.147-1.112.687-1.275 4.056-1.23 10.77-1.004 14.996 1.503.486.289.645.912.356 1.398-.29.487-.913.646-1.4.357z" />
                                 </svg>
                                 Kết nối với Spotify
                             </button>

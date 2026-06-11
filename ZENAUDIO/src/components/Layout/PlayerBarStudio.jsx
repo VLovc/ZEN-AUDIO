@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usePlayer } from '../../context/PlayerContext';
 
 const PlayerBarStudio = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const {
         currentTrack, isPlaying, togglePlay, progress,
         currentTime, duration, volume, changeVolume, seek,
-        nextTrack, previousTrack
+        nextTrack, previousTrack, isShuffle, repeatMode, toggleShuffle, toggleRepeat
     } = usePlayer();
+
+    if (location.pathname === '/home' || location.pathname === '/studio') {
+        return null;
+    }
 
 
 
@@ -54,7 +59,12 @@ const PlayerBarStudio = () => {
             {/* Center: Controls */}
             <div className="flex flex-col items-center gap-2 flex-grow max-w-lg">
                 <div className="flex items-center gap-6">
-                    <button className="material-symbols-outlined text-secondary hover:text-primary transition-all cursor-pointer">shuffle</button>
+                    <button 
+                        onClick={toggleShuffle}
+                        className={`material-symbols-outlined transition-all cursor-pointer ${isShuffle ? 'text-primary' : 'text-secondary hover:text-primary'}`}
+                    >
+                        shuffle
+                    </button>
                     <button 
                         onClick={previousTrack}
                         className="material-symbols-outlined text-on-surface hover:text-primary transition-all cursor-pointer"
@@ -77,7 +87,13 @@ const PlayerBarStudio = () => {
                     >
                         skip_next
                     </button>
-                    <button className="material-symbols-outlined text-secondary hover:text-primary transition-all cursor-pointer">repeat</button>
+                    <button 
+                        onClick={toggleRepeat}
+                        className={`material-symbols-outlined transition-all cursor-pointer relative ${repeatMode !== 'off' ? 'text-primary' : 'text-secondary hover:text-primary'}`}
+                    >
+                        {repeatMode === 'track' ? 'repeat_one' : 'repeat'}
+                        {repeatMode !== 'off' && <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"></span>}
+                    </button>
                 </div>
 
                 <div className="w-full flex items-center gap-3">

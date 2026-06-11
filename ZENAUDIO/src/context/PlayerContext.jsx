@@ -17,11 +17,33 @@ const DEFAULT_TRACK = {
 export const PlayerProvider = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState(DEFAULT_TRACK);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState(() => {
+    const saved = localStorage.getItem('zen_volume');
+    return saved !== null ? parseFloat(saved) : 0.5;
+  });
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
+  const [sdkPreviousTrack, setSdkPreviousTrack] = useState(null);
+  const [sdkNextTrack, setSdkNextTrack] = useState(null);
+  const [history, setHistory] = useState([]);
+  
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [repeatMode, setRepeatMode] = useState('off'); // 'off', 'context', 'track'
+
+  // Track history of loaded tracks
+  useEffect(() => {
+    if (currentTrack && currentTrack.id) {
+      setHistory(prev => {
+        // Avoid adding duplicate entries consecutively
+        if (prev.length > 0 && prev[prev.length - 1].id === currentTrack.id) {
+          return prev;
+        }
+        return [...prev.slice(-9), currentTrack];
+      });
+    }
+  }, [currentTrack?.id]);
 
   // References
   const audioRef = useRef(new Audio());
@@ -51,6 +73,44 @@ export const PlayerProvider = ({ children }) => {
     fetchUserProfile();
   }, []);
 
+  // Auto token refresh every minute
+  useEffect(() => {
+    const refreshInterval = setInterval(async () => {
+      const expiresAt = localStorage.getItem('expires_at');
+      const refreshToken = localStorage.getItem('refresh_token');
+      
+      if (expiresAt && refreshToken) {
+        const threshold = Date.now() + 5 * 60 * 1000; // 5 minutes before expiration
+        
+        if (threshold >= parseInt(expiresAt)) {
+          console.log("Spotify token expiring soon, automatically refreshing...");
+          try {
+            const res = await fetch(`http://127.0.0.1:5000/api/auth/refresh_token?refresh_token=${refreshToken}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.access_token) {
+                localStorage.setItem('spotify_token', data.access_token);
+                if (data.expires_in) {
+                   localStorage.setItem('expires_at', Date.now() + data.expires_in * 1000);
+                }
+                if (data.refresh_token) {
+                   localStorage.setItem('refresh_token', data.refresh_token);
+                }
+                console.log("Token refreshed successfully!");
+              }
+            } else {
+               console.warn("Failed to refresh token", res.status);
+            }
+          } catch (err) {
+            console.error("Error refreshing token", err);
+          }
+        }
+      }
+    }, 60 * 1000); // Check every 60 seconds
+
+    return () => clearInterval(refreshInterval);
+  }, []);
+
   // Helper to play HTML5 Preview
   const playHtml5Preview = useCallback((track) => {
     const previewUrl = track.preview_url || track.src;
@@ -70,7 +130,8 @@ export const PlayerProvider = ({ children }) => {
         src: previewUrl,
         uri: track.uri,
         album: track.album?.name || track.album || 'Unknown Album',
-        artistId: track.artists?.[0]?.id || track.artistId || null
+        artistId: track.artists?.[0]?.id || track.artistId || null,
+        context_uri: track.context_uri || null
       });
 
       audioRef.current.src = previewUrl;
@@ -182,7 +243,7 @@ export const PlayerProvider = ({ children }) => {
         const currentTrackFromSDK = state.track_window.current_track;
         if (currentTrackFromSDK) {
           setIsSpotifyActive(true);
-          setCurrentTrack({
+          setCurrentTrack(prev => ({
             id: currentTrackFromSDK.id,
             title: currentTrackFromSDK.name,
             subtitle: currentTrackFromSDK.artists.map(a => a.name).join(', '),
@@ -190,12 +251,43 @@ export const PlayerProvider = ({ children }) => {
             uri: currentTrackFromSDK.uri,
             src: null,
             album: currentTrackFromSDK.album.name || 'Unknown Album',
-            artistId: currentTrackFromSDK.artists[0]?.id || null
-          });
+            artistId: currentTrackFromSDK.artists[0]?.id || null,
+            context_uri: state.context?.uri || lastRequestedTrackRef.current?.context_uri || prev.context_uri || null
+          }));
           setIsPlaying(!state.paused);
           setDuration(state.duration / 1000);
           setCurrentTime(state.position / 1000);
           setProgress(state.duration ? (state.position / state.duration) : 0);
+
+          // Get previous and next tracks from the track window
+          const prevTrackSDK = state.track_window.previous_tracks?.[state.track_window.previous_tracks.length - 1];
+          const nextTrackSDK = state.track_window.next_tracks?.[0];
+
+          if (prevTrackSDK) {
+            setSdkPreviousTrack({
+              id: prevTrackSDK.id,
+              title: prevTrackSDK.name,
+              subtitle: prevTrackSDK.artists.map(a => a.name).join(', '),
+              imgSrc: prevTrackSDK.album.images[0]?.url || 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=150',
+              uri: prevTrackSDK.uri,
+              album: prevTrackSDK.album.name || 'Unknown Album'
+            });
+          } else {
+            setSdkPreviousTrack(null);
+          }
+
+          if (nextTrackSDK) {
+            setSdkNextTrack({
+              id: nextTrackSDK.id,
+              title: nextTrackSDK.name,
+              subtitle: nextTrackSDK.artists.map(a => a.name).join(', '),
+              imgSrc: nextTrackSDK.album.images[0]?.url || 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=150',
+              uri: nextTrackSDK.uri,
+              album: nextTrackSDK.album.name || 'Unknown Album'
+            });
+          } else {
+            setSdkNextTrack(null);
+          }
         }
       });
 
@@ -263,18 +355,26 @@ export const PlayerProvider = ({ children }) => {
   const playTrack = useCallback(async (track) => {
     const spotifyToken = localStorage.getItem('spotify_token');
     
+    // Always preserve context to prevent Spotify from escaping the current playlist
+    const activeContext = track.context_uri !== undefined ? track.context_uri : currentTrack?.context_uri;
+    
     // Cache last requested track for fallback
-    lastRequestedTrackRef.current = track;
+    lastRequestedTrackRef.current = { ...track, context_uri: activeContext };
 
     // Check if it is a Spotify track and we have the Web Player active
-    if (deviceId && spotifyToken && (track.uri || track.id || track.context_uri)) {
+    if (deviceId && spotifyToken && (track.uri || track.id || activeContext)) {
       try {
         // Pause local HTML5 audio
         audioRef.current.pause();
 
-        const requestBody = track.context_uri 
-          ? { context_uri: track.context_uri }
-          : { uris: [track.uri || `spotify:track:${track.id}`] };
+        const requestBody = (activeContext && (track.uri || track.id))
+          ? { 
+              context_uri: activeContext, 
+              offset: { uri: track.uri || `spotify:track:${track.id}` }
+            }
+          : activeContext
+            ? { context_uri: activeContext }
+            : { uris: [track.uri || `spotify:track:${track.id}`] };
         
         // Call backend proxy player play
         const res = await fetch(`http://127.0.0.1:5000/api/spotify/player/play?device_id=${deviceId}`, {
@@ -343,6 +443,7 @@ export const PlayerProvider = ({ children }) => {
   const changeVolume = useCallback((val) => {
     const clamped = Math.max(0, Math.min(1, val));
     setVolume(clamped);
+    localStorage.setItem('zen_volume', clamped);
     
     if (playerRef.current) {
       playerRef.current.setVolume(clamped).catch(console.error);
@@ -395,6 +496,44 @@ export const PlayerProvider = ({ children }) => {
     }
   }, [isSpotifyActive, deviceId]);
 
+  // 9a. Toggle Shuffle action
+  const toggleShuffle = useCallback(async () => {
+    const spotifyToken = localStorage.getItem('spotify_token');
+    if (isSpotifyActive && playerRef.current) {
+      const newState = !isShuffle;
+      try {
+        const res = await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=${newState}${deviceId ? `&device_id=${deviceId}` : ''}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${spotifyToken}` }
+        });
+        if (res.ok || res.status === 204) {
+          setIsShuffle(newState);
+        } else {
+          console.error("Failed to toggle shuffle");
+        }
+      } catch (err) { console.error("Error toggling shuffle:", err); }
+    }
+  }, [isSpotifyActive, isShuffle, deviceId]);
+
+  // 9b. Toggle Repeat action
+  const toggleRepeat = useCallback(async () => {
+    const spotifyToken = localStorage.getItem('spotify_token');
+    if (isSpotifyActive && playerRef.current) {
+      const nextMode = repeatMode === 'off' ? 'context' : repeatMode === 'context' ? 'track' : 'off';
+      try {
+        const res = await fetch(`https://api.spotify.com/v1/me/player/repeat?state=${nextMode}${deviceId ? `&device_id=${deviceId}` : ''}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${spotifyToken}` }
+        });
+        if (res.ok || res.status === 204) {
+          setRepeatMode(nextMode);
+        } else {
+          console.error("Failed to toggle repeat");
+        }
+      } catch (err) { console.error("Error toggling repeat:", err); }
+    }
+  }, [isSpotifyActive, repeatMode, deviceId]);
+
   // 9b. Global Logout
   const logout = useCallback(() => {
     localStorage.removeItem('spotify_token');
@@ -404,6 +543,9 @@ export const PlayerProvider = ({ children }) => {
     setCurrentTrack(DEFAULT_TRACK);
     setIsPlaying(false);
     setIsSpotifyActive(false);
+    setSdkPreviousTrack(null);
+    setSdkNextTrack(null);
+    setHistory([]);
     if (playerRef.current) {
       playerRef.current.disconnect();
       playerRef.current = null;
@@ -434,59 +576,22 @@ export const PlayerProvider = ({ children }) => {
                 uri: item.uri,
                 src: null,
                 album: item.album?.name || 'Unknown Album',
-                artistId: item.artists?.[0]?.id || null
+                artistId: item.artists?.[0]?.id || null,
+                context_uri: stateData.context?.uri || null
               });
               setIsPlaying(stateData.is_playing);
               setDuration(item.duration_ms / 1000);
+              setIsShuffle(stateData.shuffle_state || false);
+              setRepeatMode(stateData.repeat_state || 'off');
               setCurrentTime(stateData.progress_ms / 1000);
               setProgress(item.duration_ms ? (stateData.progress_ms / item.duration_ms) : 0);
               return;
             }
           }
         } catch (err) {
-          console.warn("Failed to fetch initial player state, trying fallback:", err);
-        }
-
-        try {
-          const trackRes = await fetch(`http://127.0.0.1:5000/api/spotify/track/${DEFAULT_TRACK_ID}`, {
-            headers: { 'Authorization': `Bearer ${spotifyToken}` }
-          });
-          if (trackRes.ok) {
-            const trackData = await trackRes.json();
-            setCurrentTrack({
-              id: trackData.id,
-              title: trackData.name,
-              subtitle: trackData.artists.map(a => a.name).join(', '),
-              imgSrc: trackData.album?.images[0]?.url || 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=150',
-              uri: trackData.uri,
-              src: trackData.preview_url || null,
-              album: trackData.album?.name || 'Unknown Album',
-              artistId: trackData.artists?.[0]?.id || null
-            });
-            setDuration(trackData.duration_ms / 1000);
-            setCurrentTime(0);
-            setProgress(0);
-            return;
-          }
-        } catch (err) {
-          console.error("Failed to fetch fallback track:", err);
+          console.warn("Failed to fetch initial player state:", err);
         }
       }
-
-      // Offline / Unauthenticated static fallback
-      setCurrentTrack({
-        id: DEFAULT_TRACK_ID,
-        title: "Sweet Child O' Mine",
-        subtitle: "Guns N' Roses",
-        imgSrc: "https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?q=80&w=150",
-        src: null,
-        uri: `spotify:track:${DEFAULT_TRACK_ID}`,
-        album: "Appetite for Destruction",
-        artistId: "7g2md4m4K2tP4G3W14GE9z"
-      });
-      setDuration(356);
-      setCurrentTime(0);
-      setProgress(0);
     };
 
     initializePlaybackState();
@@ -506,7 +611,14 @@ export const PlayerProvider = ({ children }) => {
     nextTrack,
     previousTrack,
     userProfile,
-    logout
+    logout,
+    sdkPreviousTrack,
+    sdkNextTrack,
+    history,
+    isShuffle,
+    repeatMode,
+    toggleShuffle,
+    toggleRepeat
   };
 
   return (

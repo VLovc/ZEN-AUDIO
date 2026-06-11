@@ -6,8 +6,8 @@ import ArtistHero from './ArtistHero';
 import PopularTracks from './PopularTracks';
 import AlbumGrid from './AlbumGrid';
 import ArtistSidebarInfo from './ArtistSidebarInfo';
-import Sidebar from '../Layout/Sidebar';
-import PlayerBarStudio from '../Layout/PlayerBarStudio';
+import Sidebar from '../Layout/Sidebar'; // REMOVED
+import PlayerBarStudio from '../Layout/PlayerBarStudio'; // REMOVED
 
 const ArtistPage = () => {
     const navigate = useNavigate();
@@ -105,10 +105,7 @@ const ArtistPage = () => {
     // Case 1: Display user's top artists grid if no specific artistId is loaded
     if (!artistId) {
         return (
-            <div className="bg-surface-container-lowest text-on-surface min-h-screen flex">
-                <Sidebar />
-                
-                <div className="flex-1 md:pl-64 min-h-screen flex flex-col relative w-full">
+            <div className="flex-1 w-full">
                     <main className="flex-grow p-6 md:p-10 pb-32">
                         {/* Header Section */}
                         <div className="flex justify-between items-end mb-8 border-b border-dotted border-primary/20 pb-4">
@@ -156,8 +153,6 @@ const ArtistPage = () => {
                             </div>
                         )}
                     </main>
-                    <PlayerBarStudio />
-                </div>
             </div>
         );
     }
@@ -165,7 +160,7 @@ const ArtistPage = () => {
     // Case 2: Display loading state for specific artist details
     if (loading) {
         return (
-            <div className="bg-[#161e00] text-[#ccff00] min-h-screen flex items-center justify-center font-pixel text-xs">
+            <div className="bg-[#161e00] text-[#ccff00] h-full flex-1 flex items-center justify-center font-pixel text-xs">
                 <div className="text-center space-y-4">
                     <div className="flex gap-2 justify-center items-end h-8">
                         <div className="w-1.5 bg-[#ccff00] animate-[pulse_0.8s_infinite] h-8" style={{ animationDelay: '0.1s' }}></div>
@@ -182,13 +177,8 @@ const ArtistPage = () => {
 
     // Case 3: Display loaded specific artist details
     return (
-        <div className="bg-surface-container-lowest text-on-surface min-h-screen flex">
-            {/* Sidebar standing still */}
-            <Sidebar />
-
-            {/* Content area: ml-64 to avoid Sidebar overlap */}
-            <div className="flex-1 md:pl-64 min-h-screen flex flex-col relative w-full">
-                <main className="flex-grow pb-32">
+        <div className="flex-1 w-full pb-32">
+            <main className="flex-grow">
                     <ArtistHero artist={artist} />
 
                     {/* Content Grid */}
@@ -201,11 +191,7 @@ const ArtistPage = () => {
                             <ArtistSidebarInfo artist={artist} />
                         </div>
                     </div>
-                </main>
-                
-                {/* Global playback bar at the bottom */}
-                <PlayerBarStudio />
-            </div>
+            </main>
         </div>
     );
 };

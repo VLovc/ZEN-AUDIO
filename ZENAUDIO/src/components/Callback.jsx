@@ -8,6 +8,7 @@ export default function Callback() {
     useEffect(() => {
         const accessToken = searchParams.get('access_token');
         const refreshToken = searchParams.get('refresh_token');
+        const expiresIn = searchParams.get('expires_in');
         const error = searchParams.get('error');
 
         if (error) {
@@ -20,6 +21,10 @@ export default function Callback() {
             localStorage.setItem('spotify_token', accessToken);
             if (refreshToken) {
                 localStorage.setItem('refresh_token', refreshToken);
+            }
+            if (expiresIn) {
+                const expiresAt = Date.now() + parseInt(expiresIn) * 1000;
+                localStorage.setItem('expires_at', expiresAt);
             }
             navigate('/home');
         } else {
