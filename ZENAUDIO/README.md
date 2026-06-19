@@ -1,16 +1,57 @@
-# React + Vite
+# ZEN AUDIO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React application built with Vite.
 
-Currently, two official plugins are available:
+## System Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Before you can clone and run this project on another machine, you only need to install two main tools:
 
-## React Compiler
+1. **[Node.js](https://nodejs.org/en/download/)** (version 18 or higher recommended) 
+   - This is the environment that allows you to run the application. It comes with `npm` (Node Package Manager), which is the tool that will automatically download all your libraries.
+2. **[Git](https://git-scm.com/downloads)**
+   - Required to clone your repository from GitHub.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*Note: The **`package.json`** file in this repository acts as your "requirements page". It contains the list of all libraries (React, Tailwind, Framer Motion, etc.) your project needs. You do not need to download them manually one by one!*
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Getting Started on a New Machine
+
+Follow these exact steps to set up the project on any new computer:
+
+### 1. Clone the Repository
+Open your terminal (or Command Prompt / PowerShell) and run:
+```bash
+git clone https://github.com/VLovc/App-music.git
+```
+
+Navigate into the project directory:
+```bash
+cd App-music/ZENAUDIO
+```
+
+### 2. Install All Required Libraries
+Now, tell `npm` to read the `package.json` file and automatically download every tool you used. Run:
+```bash
+npm install
+```
+*(This might take a minute or two. It creates a `node_modules` folder containing all the libraries).*
+
+### 3. Start the Application
+Once everything is downloaded, run the application locally:
+```bash
+npm run dev
+```
+
+Your terminal will show a local web address (usually `http://localhost:5173`). Ctrl+Click that link or open it in your web browser to use the app!
+
+---
+
+## 📦 Main Technologies Used
+This project automatically installs the following via `npm install`:
+- **React 19**
+- **Vite** (Build tool)
+- **Tailwind CSS v4** (Styling)
+- **Framer Motion & GSAP** (Animations)
+- **React Router** (Navigation)
+- **Axios** (API Requests)
