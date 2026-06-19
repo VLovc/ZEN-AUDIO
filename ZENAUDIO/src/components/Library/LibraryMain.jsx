@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion'; // ADDED
+import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedContent from '../AnimatedContent/AnimatedContent';
 import CategoryChips from './CategoryChips';
 import RecentCard from './RecentCard';
 import CollectionCard from './CollectionCard';
@@ -184,12 +185,21 @@ const LibraryMain = () => {
                                 <div className="mb-16">
                                     <h3 className="font-label-pixel text-secondary opacity-50 uppercase tracking-[0.3em] text-[10px] mb-8">Recently Played</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[104px]">
-                                        {recents.map(item => (
-                                            <RecentCard
+                                        {recents.map((item, idx) => (
+                                            <AnimatedContent
                                                 key={item.id}
-                                                {...item}
-                                                onClick={() => handlePlayTrack(item)}
-                                            />
+                                                distance={40}
+                                                direction="vertical"
+                                                delay={idx * 0.08}
+                                                duration={0.6}
+                                                initialOpacity={0}
+                                                animateOpacity
+                                            >
+                                                <RecentCard
+                                                    {...item}
+                                                    onClick={() => handlePlayTrack(item)}
+                                                />
+                                            </AnimatedContent>
                                         ))}
                                     </div>
                                 </div>
@@ -200,14 +210,32 @@ const LibraryMain = () => {
                                         <a className="font-label-pixel text-[11px] text-primary border-b border-primary/30 hover:border-primary transition-all uppercase" href="#">View all</a>
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8 min-h-[300px]">
-                                        {collections.map(col => (
-                                            <CollectionCard
+                                        {collections.map((col, idx) => (
+                                            <AnimatedContent
                                                 key={col.id}
-                                                {...col}
-                                                onClick={() => handlePlayCollection(col)}
-                                            />
+                                                distance={40}
+                                                direction="vertical"
+                                                delay={idx * 0.08}
+                                                duration={0.6}
+                                                scale={0.9}
+                                                initialOpacity={0}
+                                                animateOpacity
+                                            >
+                                                <CollectionCard
+                                                    {...col}
+                                                    onClick={() => handlePlayCollection(col)}
+                                                />
+                                            </AnimatedContent>
                                         ))}
-                                        <CollectionCard isCreateNew={true} />
+                                        <AnimatedContent 
+                                            distance={40} 
+                                            direction="vertical" 
+                                            delay={collections.length * 0.08} 
+                                            duration={0.6} 
+                                            scale={0.9}
+                                        >
+                                            <CollectionCard isCreateNew={true} />
+                                        </AnimatedContent>
                                     </div>
                                 </div>
                             </motion.div>

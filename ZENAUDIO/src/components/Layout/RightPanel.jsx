@@ -1,6 +1,7 @@
 // src/components/Layout/RightPanel.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { usePlayer } from '../../context/PlayerContext';
+import AnimatedList from '../AnimatedList/AnimatedList';
 
 
 
@@ -302,65 +303,80 @@ const RightPanel = () => {
                         <span className="font-label-pixel text-[9px] text-[#ccff00]/60 uppercase">Playback Queue</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        {/* Previous Track */}
+                        {/* Previous Track - Ambient Design */}
                         {prevTrack && (
                             <div
                                 onClick={skipPrev}
-                                className="p-3 rounded-xl border border-transparent bg-surface-container-low hover:bg-surface-container hover:border-primary/20 cursor-pointer transition-all flex items-center gap-3 group col-span-1"
+                                className={`relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-700 hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] border border-white/5 ${!nextTrack ? 'col-span-2 aspect-[2.5/1]' : 'col-span-1 aspect-square'}`}
                             >
-                                <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-neutral-900 border border-white/5">
-                                    {prevTrack.imgSrc || prevTrack.album?.images?.[0]?.url ? (
-                                        <img
-                                            src={prevTrack.imgSrc || prevTrack.album.images[0].url}
-                                            alt={prevTrack.title || prevTrack.name}
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                                            <span className="material-symbols-outlined text-sm text-secondary">skip_previous</span>
-                                        </div>
-                                    )}
+                                {/* Ambient Blurred Background Image */}
+                                <div className="absolute inset-0 z-0 bg-neutral-900">
+                                    <img
+                                        src={prevTrack.imgSrc || prevTrack.album?.images?.[0]?.url || './img/music.png'}
+                                        alt=""
+                                        className="w-full h-full object-cover opacity-60 scale-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                                    />
+                                    {/* Vignette & Gradient Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-[#121212] opacity-90 group-hover:opacity-80 transition-opacity duration-700"></div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <span className="font-pixel text-[8px] text-secondary tracking-widest uppercase block mb-0.5">PREVIOUS</span>
-                                    <h4 className="font-body font-bold text-[11px] text-on-surface truncate group-hover:text-primary transition-colors">
-                                        {prevTrack.title || prevTrack.name}
-                                    </h4>
-                                    <p className="font-pixel text-[9px] text-secondary truncate">
-                                        {prevTrack.subtitle || prevTrack.artists?.[0]?.name}
-                                    </p>
+
+                                {/* Minimalist Content */}
+                                <div className="absolute inset-0 z-10 flex flex-col justify-between p-4">
+                                    <span className="font-pixel text-[8px] text-white/50 tracking-[0.2em] uppercase drop-shadow-md">Previous</span>
+                                    
+                                    <div className="flex justify-between items-end">
+                                        <div className="min-w-0 flex-1 pr-3">
+                                            <h4 className="font-body font-bold text-[13px] text-white truncate drop-shadow-lg group-hover:text-primary transition-colors">
+                                                {prevTrack.title || prevTrack.name}
+                                            </h4>
+                                            <p className="font-pixel text-[9px] text-white/70 truncate mt-1.5 drop-shadow-md">
+                                                {prevTrack.subtitle || prevTrack.artists?.[0]?.name}
+                                            </p>
+                                        </div>
+                                        {/* Subtle Playback Icon */}
+                                        <div className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 shrink-0 transform opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                            <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>fast_rewind</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Next Track */}
+                        {/* Next Track - Ambient Design */}
                         {nextTrack && (
                             <div
                                 onClick={skipNext}
-                                className={`p-3 rounded-xl border border-transparent bg-surface-container-low hover:bg-surface-container hover:border-primary/20 cursor-pointer transition-all flex items-center gap-3 group ${prevTrack ? 'col-span-1' : 'col-span-2'
-                                    }`}
+                                className={`relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-700 hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] border border-white/5 ${!prevTrack ? 'col-span-2 aspect-[2.5/1]' : 'col-span-1 aspect-square'}`}
                             >
-                                <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-neutral-900 border border-white/5">
-                                    {nextTrack.imgSrc || nextTrack.album?.images?.[0]?.url ? (
-                                        <img
-                                            src={nextTrack.imgSrc || nextTrack.album.images[0].url}
-                                            alt={nextTrack.title || nextTrack.name}
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-                                            <span className="material-symbols-outlined text-sm text-secondary">skip_next</span>
-                                        </div>
-                                    )}
+                                {/* Ambient Blurred Background Image */}
+                                <div className="absolute inset-0 z-0 bg-neutral-900">
+                                    <img
+                                        src={nextTrack.imgSrc || nextTrack.album?.images?.[0]?.url || './img/music.png'}
+                                        alt=""
+                                        className="w-full h-full object-cover opacity-60 scale-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                                    />
+                                    {/* Vignette & Gradient Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-[#121212] opacity-90 group-hover:opacity-80 transition-opacity duration-700"></div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <span className="font-pixel text-[8px] text-secondary tracking-widest uppercase block mb-0.5">NEXT</span>
-                                    <h4 className="font-body font-bold text-[11px] text-on-surface truncate group-hover:text-primary transition-colors">
-                                        {nextTrack.title || nextTrack.name}
-                                    </h4>
-                                    <p className="font-pixel text-[9px] text-secondary truncate">
-                                        {nextTrack.subtitle || nextTrack.artists?.[0]?.name}
-                                    </p>
+
+                                {/* Minimalist Content */}
+                                <div className="absolute inset-0 z-10 flex flex-col justify-between p-4">
+                                    <span className="font-pixel text-[8px] text-white/50 tracking-[0.2em] uppercase text-right drop-shadow-md">Up Next</span>
+                                    
+                                    <div className="flex justify-between items-end">
+                                        {/* Subtle Playback Icon */}
+                                        <div className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10 shrink-0 transform opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                            <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>fast_forward</span>
+                                        </div>
+                                        <div className="min-w-0 flex-1 pl-3 text-right">
+                                            <h4 className="font-body font-bold text-[13px] text-white truncate drop-shadow-lg group-hover:text-primary transition-colors">
+                                                {nextTrack.title || nextTrack.name}
+                                            </h4>
+                                            <p className="font-pixel text-[9px] text-white/70 truncate mt-1.5 drop-shadow-md">
+                                                {nextTrack.subtitle || nextTrack.artists?.[0]?.name}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -375,19 +391,26 @@ const RightPanel = () => {
                     <span className="font-label-pixel text-[9px] text-[#ccff00]/60 uppercase">{playlists.length} playlists found</span>
                 </div>
 
-                <div className="space-y-3 max-h-[258px] overflow-y-auto pr-1.5 custom-scrollbar">
-                    {playlists.map((playlist) => {
+                <AnimatedList
+                    items={playlists}
+                    className="custom-scrollbar pr-1.5"
+                    showGradients={false}
+                    enableArrowNavigation={true}
+                    displayScrollbar={true}
+                    onItemSelect={(playlist) => {
+                        const playlistImg = playlist.images?.[0]?.url || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150";
+                        playTrack({ context_uri: playlist.uri, title: playlist.name, subtitle: "Spotify Playlist", imgSrc: playlistImg });
+                    }}
+                    renderItem={(playlist, isSelected) => {
                         const playlistImg = playlist.images?.[0]?.url || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150";
                         const isCurrentContext = currentTrack?.context_uri === playlist.uri;
 
                         return (
                             <div
-                                key={playlist.id}
-                                onClick={() => playTrack({ context_uri: playlist.uri, title: playlist.name, subtitle: "Spotify Playlist", imgSrc: playlistImg })}
                                 className={`flex items-center gap-3.5 p-3 rounded-xl transition-all group cursor-pointer border ${isCurrentContext
                                     ? 'bg-surface-container-high border-primary/40 shadow-[0_0_12px_rgba(204,255,0,0.05)]'
                                     : 'bg-surface-container-low border-transparent hover:bg-surface-container hover:border-primary/20'
-                                    }`}
+                                    } ${isSelected ? 'ring-1 ring-primary/50' : ''}`}
                             >
                                 <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-white/5 bg-neutral-900">
                                     <img src={playlistImg} alt={playlist.name} className="w-full h-full object-cover" />
@@ -417,111 +440,11 @@ const RightPanel = () => {
                                 </button>
                             </div>
                         );
-                    })}
-                </div>
+                    }}
+                />
             </div>
 
-            {/* 3. Up Next (Dynamic Recommendations) */}
-            {hasActiveTrack && (
-                <div className="bg-[#1b1c1c]/40 backdrop-blur-xl p-5 rounded-2xl border border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:border-primary/10 transition-all">
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-4 select-none px-1">
-                        <div className="flex items-center gap-2">
-                            <p className="font-pixel text-[9px] text-primary font-bold tracking-widest uppercase">
-                                {isPlaylistContext ? 'UP NEXT // PLAYLIST TRACKS' : 'UP NEXT // RECOMMENDATIONS'}
-                            </p>
-                            {isLoadingRecs && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                            )}
-                        </div>
-                        <span className="font-pixel text-[8px] text-secondary tracking-widest uppercase">[UPLINK: ACTIVE]</span>
-                    </div>
 
-                    {/* Skeleton loading */}
-                    {isLoadingRecs ? (
-                        <div className="space-y-2">
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <div key={i} className="flex items-center gap-3 p-2 rounded-lg">
-                                    <div className="w-9 h-9 rounded-md bg-white/5 shrink-0 animate-pulse" />
-                                    <div className="flex-1 space-y-1.5">
-                                        <div className="h-2.5 rounded bg-white/5 animate-pulse" style={{ width: `${55 + i * 8}%` }} />
-                                        <div className="h-2 rounded bg-white/5 animate-pulse" style={{ width: `${30 + i * 5}%` }} />
-                                    </div>
-                                    <div className="w-8 h-2 rounded bg-white/5 animate-pulse shrink-0" />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        /* List with slide-in animation keyed to recsKey */
-                        <div key={recsKey} className="space-y-1.5 text-xs select-none max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-                            {activeTracks
-                                .slice(
-                                    activeIndex !== -1 ? activeIndex + 1 : 0,
-                                    activeIndex !== -1 ? activeIndex + 101 : 100
-                                )
-                                .map((track, idx) => {
-                                    const trackTitle = track.name;
-                                    const artistName = track.artists?.[0]?.name || "Unknown Artist";
-                                    const albumImg = track.album?.images?.[2]?.url || track.album?.images?.[0]?.url;
-                                    const isCurrentTrack = isSameTrack(track, currentTrack);
-
-                                    return (
-                                        <div
-                                            key={track.id + idx}
-                                            onClick={() => playTrack({ ...track, context_uri: currentTrack?.context_uri })}
-                                            className={`group flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all rec-slide-in ${isCurrentTrack
-                                                ? 'bg-primary/10 border-l-2 border-primary'
-                                                : 'hover:bg-white/5 border-l-2 border-transparent'
-                                                }`}
-                                            style={{ animationDelay: `${idx * 60}ms` }}
-                                        >
-                                            {/* Album thumbnail */}
-                                            <div className="relative w-9 h-9 rounded-md overflow-hidden shrink-0 bg-white/5">
-                                                {albumImg && (
-                                                    <img src={albumImg} alt={trackTitle} className="w-full h-full object-cover" />
-                                                )}
-                                                {/* Playing indicator overlay */}
-                                                {isCurrentTrack && isPlaying && (
-                                                    <div className="absolute inset-0 bg-black/50 flex items-end justify-center gap-px pb-1">
-                                                        {[0.7, 1.0, 0.8].map((h, i) => (
-                                                            <div
-                                                                key={i}
-                                                                className="w-1 rounded-t-sm bg-primary"
-                                                                style={{
-                                                                    height: `${h * 14}px`,
-                                                                    animationName: 'sound-wave',
-                                                                    animationDuration: `${0.5 + i * 0.15}s`,
-                                                                    animationTimingFunction: 'ease-in-out',
-                                                                    animationIterationCount: 'infinite',
-                                                                    animationDirection: 'alternate',
-                                                                    animationPlayState: 'running',
-                                                                }}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Track info */}
-                                            <div className="flex-1 min-w-0">
-                                                <p className={`truncate text-[11px] font-semibold leading-tight ${isCurrentTrack ? 'text-primary' : 'text-zinc-300 group-hover:text-white'
-                                                    }`}>{trackTitle}</p>
-                                                <p className="truncate text-[9px] text-zinc-500 group-hover:text-zinc-400 font-pixel mt-0.5">
-                                                    {artistName}
-                                                </p>
-                                            </div>
-
-                                            {/* Duration */}
-                                            <span className="font-pixel text-[9px] text-zinc-500 group-hover:text-zinc-400 shrink-0">
-                                                {formatTime(track.duration_ms || 240000)}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
-                        </div>
-                    )}
-                </div>
-            )}
         </section>
     );
 };

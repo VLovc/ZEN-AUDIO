@@ -1,6 +1,7 @@
 // src/components/Layout/MainContent.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { usePlayer } from '../../context/PlayerContext';
+import DecryptedText from '../DecryptedText/DecryptedText';
 
 const ScrollingTitle = ({ text, isPlaying }) => {
     const containerRef = useRef(null);
@@ -39,11 +40,23 @@ const ScrollingTitle = ({ text, isPlaying }) => {
                     ref={textRef}
                     className={`font-headline text-5xl font-bold tracking-tight text-on-surface ${isOverflowing ? 'pr-16' : ''}`}
                 >
-                    {text}
+                    <DecryptedText 
+                        key={text} 
+                        text={text} 
+                        animateOn="view" 
+                        speed={140} 
+                        maxIterations={10} 
+                    />
                 </div>
                 {isOverflowing && (
                     <div className="font-headline text-5xl font-bold tracking-tight text-on-surface pr-16">
-                        {text}
+                        <DecryptedText 
+                            key={text + "-duplicate"} 
+                            text={text} 
+                            animateOn="view" 
+                            speed={140} 
+                            maxIterations={10} 
+                        />
                     </div>
                 )}
             </div>
@@ -70,7 +83,7 @@ const MainContent = () => {
         changeVolume
     } = usePlayer();
 
-    const [waveformBars, setWaveformBars] = useState([20, 40, 60, 80, 100, 90, 70, 50, 30, 45, 65, 85, 95, 75, 55]);
+    const [waveformBars, setWaveformBars] = useState(Array.from({ length: 96 }, () => Math.random() * 80 + 20));
     const [colorOffset, setColorOffset] = useState(0);
 
     useEffect(() => {
@@ -177,10 +190,13 @@ const MainContent = () => {
     const activeColorDim = isPlaying ? extractedColor : 'var(--color-surface-dim)';
 
     return (
-        <section className="lg:col-span-7 flex flex-col w-full pb-24">
+        <section className="lg:col-span-7 flex flex-col justify-center w-full pb-0">
             {/* Turntable Plinth */}
-            <div className="relative aspect-square max-w-[500px] mx-auto w-full group">
-                <div className="absolute inset-0 bg-surface-dim rounded-[40px] shadow-[inset_-5px_-5px_15px_rgba(255,255,255,0.8),inset_5px_5px_15px_rgba(0,0,0,0.1)] flex items-center justify-center p-8">
+            <div className="relative aspect-square max-w-[420px] mx-auto w-full group perspective-[1000px]">
+                {/* Premium Dark Acrylic/Metal Base */}
+                <div className="absolute inset-0 bg-[#161618] rounded-[48px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.06),inset_0_-2px_6px_rgba(0,0,0,0.6)] flex items-center justify-center p-10 overflow-hidden ring-1 ring-black/80">
+                    {/* Metallic Texture Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-black/60 pointer-events-none"></div>
 
                     {/* 💿 Rotating Vinyl */}
                     <div
@@ -198,18 +214,6 @@ const MainContent = () => {
                         ></div>
                         {/* Outer black rim */}
                         <div className="absolute inset-0 rounded-full border-[16px] border-on-surface flex items-center justify-center"></div>
-
-                        {/* Black Organic Shapes (SVG) */}
-                        <svg className="absolute inset-0 w-full h-full text-on-surface drop-shadow-xl" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" style={{ zIndex: 1 }}>
-                            <defs>
-                                <mask id="vinyl-mask">
-                                    <path fill="white" d="M100,0 C130,10 140,50 170,40 C190,30 200,60 200,100 C200,130 180,180 150,160 C120,140 110,190 100,200 C70,190 60,150 30,160 C10,170 0,140 0,100 C0,70 20,20 50,40 C80,60 90,10 100,0 Z" />
-                                    <path fill="black" d="M100,20 C120,25 130,55 150,45 C165,35 180,55 180,100 C180,120 165,160 140,145 C115,130 110,170 100,180 C80,175 70,145 45,155 C25,165 20,130 20,100 C20,70 40,40 60,50 C80,60 85,25 100,20 Z" />
-                                    <path fill="white" d="M100,45 C110,50 115,70 130,65 C140,60 150,75 150,100 C150,115 140,135 125,125 C110,115 105,135 100,145 C85,140 80,120 65,130 C50,140 45,115 45,100 C45,80 60,60 75,70 C90,80 90,50 100,45 Z" />
-                                </mask>
-                            </defs>
-                            <rect width="200" height="200" fill="currentColor" mask="url(#vinyl-mask)" />
-                        </svg>
 
 
                         {/* Concentric rings (vinyl grooves) */}
@@ -236,19 +240,48 @@ const MainContent = () => {
                         </div>
                     </div>
 
-                    {/* 🕹️ Tonearm Assembly */}
+                    {/* 🕹️ Tonearm Assembly - Connected Premium Redesign */}
                     <div
-                        className="absolute top-8 right-8 w-16 h-48 origin-top-right transition-transform duration-1000 ease-in-out pointer-events-none z-20"
-                        style={{ transform: isPlaying ? 'rotate(10deg)' : 'rotate(-30deg)' }}
+                        className="absolute top-6 right-12 w-12 h-64 origin-[50%_8%] transition-transform duration-1000 ease-in-out pointer-events-none z-20 flex flex-col items-center"
+                        style={{ transform: isPlaying ? 'rotate(24deg)' : 'rotate(-10deg)', transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}
                     >
-                        <div className="w-4 h-4 bg-secondary-fixed-dim rounded-full shadow-md ml-auto"></div>
-                        <div className="w-1.5 h-full bg-surface-variant mx-auto rounded-full shadow-inner border border-white/20"></div>
-                        <div className="w-6 h-10 bg-on-surface-variant rounded-sm mt-[-10px] mx-auto shadow-md"></div>
+                        {/* Pivot & Counterweight (top) */}
+                        <div className="w-12 h-12 bg-gradient-to-br from-zinc-300 via-zinc-400 to-zinc-600 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.6)] border border-zinc-400/50 flex items-center justify-center z-20 shrink-0">
+                            <div className="w-7 h-7 bg-gradient-to-br from-zinc-800 to-zinc-600 rounded-full shadow-inner border border-black/40 flex items-center justify-center">
+                                <div className="w-2.5 h-2.5 bg-zinc-900 rounded-full shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]"></div>
+                            </div>
+                        </div>
+
+                        {/* Metallic Tonearm Tube */}
+                        <div className="w-2.5 h-44 bg-gradient-to-r from-zinc-300 via-zinc-100 to-zinc-400 shadow-[3px_5px_10px_rgba(0,0,0,0.5),inset_-1px_0_3px_rgba(0,0,0,0.3)] border-l border-white/40 z-10 -mt-2"></div>
+
+                        {/* Stylus Headshell Connector */}
+                        <div className="w-4 h-5 bg-gradient-to-b from-zinc-300 to-zinc-500 rounded-sm shadow-[0_5px_10px_rgba(0,0,0,0.4)] z-20 transform rotate-12 origin-top">
+                            {/* Cartridge */}
+                            <div className="w-7 h-12 bg-gradient-to-br from-zinc-800 to-black rounded-t-sm rounded-b-md shadow-[0_8px_20px_rgba(0,0,0,0.7)] border border-white/10 flex flex-col items-center absolute -left-[5px] top-3 z-30">
+                                {/* Record Color Matching Accent */}
+                                <div className="w-full h-1.5 mt-2 transition-colors duration-500" style={{ backgroundColor: isPlaying ? activeColor : '#52525b', boxShadow: isPlaying ? `0 0 8px ${activeColor}` : 'none' }}></div>
+                                
+                                <div className="w-5 h-1 bg-zinc-700 mt-1 rounded-full border border-black"></div>
+                                
+                                {/* Needle Tip Base */}
+                                <div className="w-2 h-3 bg-gradient-to-b from-zinc-300 to-zinc-500 mt-2 shadow-sm relative">
+                                    {/* The needle itself */}
+                                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-[1.5px] h-2 bg-zinc-200"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="absolute bottom-8 left-8 flex gap-4">
-                        <div className="w-12 h-12 rounded-full bg-surface shadow-md flex items-center justify-center border border-white/55">
-                            <div className={`w-3 h-3 rounded-full transition-all duration-500 ${isPlaying ? 'bg-error shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 'bg-neutral-400'}`}></div>
+                    {/* Premium Base Controls */}
+                    <div className="absolute bottom-8 left-8 flex gap-5">
+                        <div 
+                            onClick={togglePlay}
+                            className="w-14 h-14 rounded-full bg-gradient-to-br from-zinc-800 to-black shadow-[0_8px_16px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.1)] flex items-center justify-center border border-white/5 cursor-pointer hover:scale-105 active:scale-95 transition-all group"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#121212] to-black shadow-[inset_0_3px_6px_rgba(0,0,0,0.8)] border border-black/50 flex items-center justify-center">
+                                <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${isPlaying ? 'bg-red-500 shadow-[0_0_12px_rgba(239,68,68,1)]' : 'bg-transparent border border-white/20'}`}></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,31 +299,12 @@ const MainContent = () => {
 
                 {/* 🌟 Tên bài hát & Nghệ sĩ từ Spotify */}
                 <ScrollingTitle text={track.title} isPlaying={isPlaying} />
-                <p className="font-body text-base text-on-surface-variant mb-8 line-clamp-1">{track.subtitle} • {track.album}</p>
+                <p className="font-body text-base text-on-surface-variant mb-4 line-clamp-1">{track.subtitle} • {track.album}</p>
 
-                {/* Waveform Visualizer */}
-                <div className="w-full flex items-end justify-between h-16 gap-1 mb-6 px-4">
-                    {waveformBars.map((height, i) => {
-                        const totalBars = waveformBars.length;
-                        const virtualIndex = (i - colorOffset % totalBars + totalBars) % totalBars;
-                        // Thay thế HSL lightness bằng Opacity để áp dụng được cho bất kỳ màu nào
-                        const opacityValue = 0.2 + (1 - (virtualIndex / (totalBars - 1))) * 0.8;
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    height: isPlaying ? `${height}%` : '15%',
-                                    backgroundColor: activeColor,
-                                    opacity: opacityValue
-                                }}
-                                className="flex-1 rounded-full transition-all duration-250"
-                            ></div>
-                        );
-                    })}
-                </div>
+
 
                 {/* Progress Bar & Volume */}
-                <div className="w-full flex justify-between items-center mb-10 relative">
+                <div className="w-full flex justify-between items-center mb-6 relative">
                     <span className="font-pixel text-xs text-secondary w-16 text-right select-none">{formatTime(currentTime)}</span>
 
                     <div
@@ -379,6 +393,31 @@ const MainContent = () => {
                         {repeatMode !== 'off' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"></span>}
                     </button>
                 </div>
+            </div>
+
+            {/* Ambient Waveform Visualizer at Bottom of Page */}
+            <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between h-[10vh] max-h-20 gap-[3px] z-[1] pointer-events-none opacity-80 px-4">
+                {waveformBars.map((height, i) => {
+                    const totalBars = waveformBars.length;
+                    const virtualIndex = (i - colorOffset % totalBars + totalBars) % totalBars;
+                    const pos = virtualIndex / (totalBars - 1);
+                    
+                    // Creates a smooth curve going from dark to light, and gradually darkening at the end
+                    const curve = Math.sin(pos * Math.PI * 0.8);
+                    const opacityValue = 0.2 + curve * 0.7;
+                    
+                    return (
+                        <div
+                            key={i}
+                            style={{
+                                height: isPlaying ? `${Math.max(8, height * 0.6)}%` : '8%',
+                                backgroundColor: activeColor,
+                                opacity: opacityValue
+                            }}
+                            className="flex-1 rounded-t-md transition-all duration-300"
+                        ></div>
+                    );
+                })}
             </div>
         </section>
     );

@@ -6,14 +6,13 @@ import ArtistHero from './ArtistHero';
 import PopularTracks from './PopularTracks';
 import AlbumGrid from './AlbumGrid';
 import ArtistSidebarInfo from './ArtistSidebarInfo';
-import Sidebar from '../Layout/Sidebar'; // REMOVED
-import PlayerBarStudio from '../Layout/PlayerBarStudio'; // REMOVED
+import AnimatedContent from '../AnimatedContent/AnimatedContent';
 
 const ArtistPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { currentTrack } = usePlayer();
-    
+
     // Get artist ID from query params
     const artistId = searchParams.get('id');
 
@@ -73,7 +72,7 @@ const ArtistPage = () => {
             setLoadingTop(true);
             const token = localStorage.getItem('spotify_token');
             const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-            
+
             try {
                 const res = await fetch('http://127.0.0.1:5000/api/spotify/me/top/artists?limit=12', { headers });
                 if (res.ok) {
@@ -106,32 +105,41 @@ const ArtistPage = () => {
     if (!artistId) {
         return (
             <div className="flex-1 w-full">
-                    <main className="flex-grow p-6 md:p-10 pb-32">
-                        {/* Header Section */}
-                        <div className="flex justify-between items-end mb-8 border-b border-dotted border-primary/20 pb-4">
-                            <div>
-                                <h2 className="font-display-lg text-4xl font-bold text-on-surface mb-2">Artists Console</h2>
-                                <p className="font-label-pixel text-secondary opacity-70 uppercase tracking-[0.2em] text-[10px]">Đồng bộ danh sách nghệ sĩ</p>
-                            </div>
-                            <span className="font-label-pixel text-[9px] text-[#ccff00] bg-black/40 px-2.5 py-1 rounded border border-white/5 uppercase tracking-widest">[UPLINK_STABLE]</span>
+                <main className="flex-grow p-6 md:p-10 pb-24 md:pb-24">
+                    {/* Header Section */}
+                    <div className="flex justify-between items-end mb-8 border-b border-dotted border-primary/20 pb-4">
+                        <div>
+                            <h2 className="font-display-lg text-4xl font-bold text-on-surface mb-2">Artists Console</h2>
+                            <p className="font-label-pixel text-secondary opacity-70 uppercase tracking-[0.2em] text-[10px]">Đồng bộ danh sách nghệ sĩ</p>
                         </div>
+                        <span className="font-label-pixel text-[9px] text-[#ccff00] bg-black/40 px-2.5 py-1 rounded border border-white/5 uppercase tracking-widest">[UPLINK_STABLE]</span>
+                    </div>
 
-                        {loadingTop ? (
-                            <div className="flex flex-col gap-3 justify-center items-center py-20 font-pixel text-xs text-primary">
-                                <div className="flex gap-1.5 items-end h-8">
-                                    <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-6" style={{ animationDelay: '0.1s' }}></div>
-                                    <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-4" style={{ animationDelay: '0.2s' }}></div>
-                                    <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-5" style={{ animationDelay: '0.3s' }}></div>
-                                </div>
-                                <div className="tracking-widest animate-pulse mt-2">SCANNING_NEURAL_UPLINK...</div>
+                    {loadingTop ? (
+                        <div className="flex flex-col gap-3 justify-center items-center py-20 font-pixel text-xs text-primary">
+                            <div className="flex gap-1.5 items-end h-8">
+                                <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-6" style={{ animationDelay: '0.1s' }}></div>
+                                <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-4" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-1.5 bg-primary animate-[bounce_0.6s_infinite] h-5" style={{ animationDelay: '0.3s' }}></div>
                             </div>
-                        ) : (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {topArtists.map((art) => {
-                                    const artImg = art.images?.[0]?.url || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150";
-                                    return (
-                                        <div 
-                                            key={art.id}
+                            <div className="tracking-widest animate-pulse mt-2">SCANNING_NEURAL_UPLINK...</div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {topArtists.map((art, idx) => {
+                                const artImg = art.images?.[0]?.url || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=150";
+                                return (
+                                    <AnimatedContent
+                                        key={art.id}
+                                        distance={40}
+                                        direction="vertical"
+                                        delay={idx * 0.08}
+                                        duration={0.6}
+                                        scale={0.9}
+                                        initialOpacity={0}
+                                        animateOpacity
+                                    >
+                                        <div
                                             onClick={() => navigate(`/artist?id=${art.id}`)}
                                             className="group cursor-pointer bg-[#1b1c1c]/10 border border-white/5 hover:border-primary/20 rounded-2xl p-4 transition-all duration-300 hover:shadow-[0_0_15px_rgba(204,255,0,0.05)] flex flex-col h-full bg-zinc-950"
                                         >
@@ -148,11 +156,12 @@ const ArtistPage = () => {
                                                 {art.followers?.total?.toLocaleString() || 0} syncs
                                             </p>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </main>
+                                    </AnimatedContent>
+                                );
+                            })}
+                        </div>
+                    )}
+                </main>
             </div>
         );
     }
@@ -177,20 +186,20 @@ const ArtistPage = () => {
 
     // Case 3: Display loaded specific artist details
     return (
-        <div className="flex-1 w-full pb-32">
+        <div className="flex-1 w-full pb-10 md:pb-10">
             <main className="flex-grow">
-                    <ArtistHero artist={artist} />
+                <ArtistHero artist={artist} />
 
-                    {/* Content Grid */}
-                    <div className="px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 mt-10">
-                        <div className="lg:col-span-8 space-y-12">
-                            <PopularTracks tracks={topTracks} />
-                            <AlbumGrid albums={albums} />
-                        </div>
-                        <div className="lg:col-span-4">
-                            <ArtistSidebarInfo artist={artist} />
-                        </div>
+                {/* Content Grid */}
+                <div className="px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 mt-10">
+                    <div className="lg:col-span-8 space-y-12">
+                        <PopularTracks tracks={topTracks} />
+                        <AlbumGrid albums={albums} />
                     </div>
+                    <div className="lg:col-span-4">
+                        <ArtistSidebarInfo artist={artist} />
+                    </div>
+                </div>
             </main>
         </div>
     );

@@ -58,8 +58,8 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="flex-1 p-6 md:p-10 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <main className="flex-1 p-6 md:p-10 pb-12 md:pb-16 relative flex flex-col">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 w-full">
           <MainContent />
           <RightPanel />
         </div>
